@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Blank Template",
+    "name": "BNILab Tower System",
     "slug": "tower_client_mobile",
     "privacy": "public",
     "sdkVersion": "36.0.0",
@@ -24,7 +24,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bnilab.tower",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.bnilab.tower",
+      "versionCode": 1
+    },
+    "description": ""
   }
 }
