@@ -11,7 +11,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Button
+  Button,
+  TouchableOpacityBase
 } from "react-native";
 import logo from "./assets/logo_small2.png";
 import { BorderlessButton, Switch } from "react-native-gesture-handler";
@@ -87,6 +88,289 @@ class AuthButton extends Component {
   }
 }
 
+class ExtruderButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "x-auth-token": this.props["x-auth-token"],
+      speed: this.props.speed,
+      stop: this.props.stop,
+      direction: this.props.direction
+    };
+  }
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.setState({ stop: this.props.stop }),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  async run_extruder() {
+    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.state["x-auth-token"]
+      },
+      body: JSON.stringify({
+        stop: false,
+        speed: this.props.speed,
+        direction: this.props.direction
+      })
+    });
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      this.setState({ stop: false });
+      alert("running");
+      return;
+    }
+  }
+
+  async stop_extruder() {
+    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.state["x-auth-token"]
+      },
+      body: JSON.stringify({
+        stop: true,
+        speed: this.props.speed,
+        direction: this.props.direction
+      })
+    });
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      this.setState({ stop: true });
+      alert("stopped");
+      return;
+    }
+  }
+
+  render() {
+    if (this.state.stop) {
+      return (
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.setState({ direction: "+" });
+              this.run_extruder();
+            }}
+          >
+            <Text style={styles.buttonText}>Extruder UP</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.setState({ direction: "-" });
+              this.run_extruder();
+            }}
+          >
+            <Text style={styles.buttonText}>Extruder DOWN</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <TouchableOpacity
+          style={styles.buttonCaution}
+          onPress={() => {
+            clearInterval(this.timerID);
+            this.stop_extruder();
+          }}
+        >
+          <Text style={styles.buttonText}>Stop Extruder</Text>
+          <ActivityIndicator size="small" color="#00ff00" />
+          <Text style={styles.buttonText}>{this.props.speed}RPM</Text>
+        </TouchableOpacity>
+      );
+    }
+  }
+}
+
+class SpoolButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "x-auth-token": this.props["x-auth-token"],
+      RPM: this.props.speed,
+      stop: this.props.stop,
+      DIR: this.props.direction
+    };
+  }
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.setState({ stop: this.props.stop }),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  async run_spool() {
+    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.props["x-auth-token"]
+      },
+      body: JSON.stringify({
+        stop: false,
+        speed: this.props.speed,
+        direction: this.props.direction
+      })
+    });
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      this.setState({ stop: false });
+      alert("running");
+      return;
+    }
+  }
+
+  async stop_spool() {
+    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.state["x-auth-token"]
+      },
+      body: JSON.stringify({
+        stop: true,
+        speed: 200,
+        direction: "-"
+      })
+    });
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      this.setState({ stop: true });
+      alert("stopped");
+      return;
+    }
+  }
+
+  render() {
+    if (this.state.stop) {
+      return (
+        <View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.run_spool();
+            }}
+          >
+            <Text style={styles.buttonText}>Run Spool</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <TouchableOpacity
+            style={styles.buttonCaution}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.stop_spool();
+            }}
+          >
+            <Text style={styles.buttonText}>Stop Spool</Text>
+            <ActivityIndicator size="small" color="#00ff00" />
+            <Text style={styles.buttonText}>{this.props.speed} RPM</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  }
+}
+
+class HeaterButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "x-auth-token": this.props["x-auth-token"],
+      temperature: this.props.temperature,
+      running: this.props.running
+    };
+  }
+
+  async run_heater() {
+    let response = await fetch(
+      "http://tower.minhoeom.com:3010/api/temperature",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-auth-token": this.props["x-auth-token"]
+        },
+        body: JSON.stringify({
+          temp: this.props.temperature
+        })
+      }
+    );
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      this.setState({ running: true });
+      alert("running");
+      return;
+    }
+  }
+
+  render() {
+    return (
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Run Heater (not operate)</Text>
+      </TouchableOpacity>
+    );
+  }
+}
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -107,6 +391,7 @@ export default class App extends Component {
       spoolRPM: 0,
       spoolStop: true,
       temperature: 0,
+      heaterRunning: false,
       userInfo: []
     };
     this.myTextInput = React.createRef();
@@ -256,7 +541,7 @@ export default class App extends Component {
     let responseStatus = await response.status;
     let jwt;
 
-    this.setState({ "x-auth-token": responseText, ID: "", PW: "" });
+    this.setState({ "x-auth-token": responseText });
 
     // decode jwt
     if (responseStatus != 200) {
@@ -313,118 +598,6 @@ export default class App extends Component {
     }
   }
 
-  async run_extruder(extruderDIR) {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "x-auth-token": this.state["x-auth-token"]
-      },
-      body: JSON.stringify({
-        stop: false,
-        speed: this.state.extruderRPM,
-        direction: extruderDIR
-      })
-    });
-
-    let responseText = await response.text();
-    let responseStatus = await response.status;
-
-    if (responseStatus != 200) {
-      alert(responseText);
-      return;
-    } else {
-      this.setState({ extruderStop: false });
-      alert("running");
-      return;
-    }
-  }
-
-  async stop_extruder() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "x-auth-token": this.state["x-auth-token"]
-      },
-      body: JSON.stringify({
-        stop: true,
-        speed: this.state.extruderRPM,
-        direction: this.state.extruderDIR
-      })
-    });
-
-    let responseText = await response.text();
-    let responseStatus = await response.status;
-
-    if (responseStatus != 200) {
-      alert(responseText);
-      return;
-    } else {
-      this.setState({ extruderStop: true });
-      alert("stopped");
-      return;
-    }
-  }
-
-  async run_spool() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "x-auth-token": this.state["x-auth-token"]
-      },
-      body: JSON.stringify({
-        stop: false,
-        speed: this.state.spoolRPM,
-        direction: "-"
-      })
-    });
-
-    let responseText = await response.text();
-    let responseStatus = await response.status;
-
-    if (responseStatus != 200) {
-      alert(responseText);
-      return;
-    } else {
-      this.setState({ spoolStop: false });
-      alert("running");
-      return;
-    }
-  }
-
-  async stop_spool() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "x-auth-token": this.state["x-auth-token"]
-      },
-      body: JSON.stringify({
-        stop: true,
-        speed: this.state.spoolRPM,
-        direction: "-"
-      })
-    });
-
-    let responseText = await response.text();
-    let responseStatus = await response.status;
-
-    if (responseStatus != 200) {
-      alert(responseText);
-      return;
-    } else {
-      this.setState({ spoolStop: true });
-      alert("stopped");
-      return;
-    }
-  }
-
   async queryEveryUser() {
     let response = await fetch(
       "http://tower.minhoeom.com:3010/api/admin/findEveryUser",
@@ -473,260 +646,60 @@ export default class App extends Component {
         </View>
       );
     } else {
-      return <Fragment>{this.controlPanel()}</Fragment>;
+      return this.controlPanel();
     }
   }
 
   controlPanel() {
-    if (this.state.extruderStop && this.state.spoolStop) {
-      return (
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.button_logout}
-            onPress={() => {
-              this.logOut();
-            }}
-          >
-            <Text style={styles.buttonText}>Log out</Text>
-          </TouchableOpacity>
-          <Text>You can control the fiber drawing tower!</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Extruder Speed"
-            onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Spool Speed"
-            onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Temperature - unavailable"
-            onChangeText={temperature =>
-              this.setState({ temperature: temperature })
-            }
-            editable={false}
-            keyboardType="number-pad"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.setState({ extruderDIR: "+" });
-                this.run_extruder("+");
-              }}
-            >
-              <Text style={styles.buttonText}>Extruder UP</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.setState({ extruderDIR: "-" });
-                this.run_extruder("-");
-              }}
-            >
-              <Text style={styles.buttonText}>Extruder DOWN</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              this.run_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>Run Spool</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else if (!this.state.extruderStop && this.state.spoolStop) {
-      return (
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.button_logout}
-            onPress={() => {
-              this.logOut();
-            }}
-          >
-            <Text style={styles.buttonText}>Log out</Text>
-          </TouchableOpacity>
-          <Text>You can control the fiber drawing tower!</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Extruder Speed"
-            onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Spool Speed"
-            onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Temperature - unavailable"
-            onChangeText={temperature =>
-              this.setState({ temperature: temperature })
-            }
-            editable={false}
-            keyboardType="number-pad"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              this.stop_extruder();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Extruder</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              this.run_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>Run Spool</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else if (this.state.extruderStop && !this.state.spoolStop) {
-      return (
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.button_logout}
-            onPress={() => {
-              this.logOut();
-            }}
-          >
-            <Text style={styles.buttonText}>Log out</Text>
-          </TouchableOpacity>
-          <Text>You can control the fiber drawing tower!</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Extruder Speed"
-            onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Spool Speed"
-            onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Temperature - unavailable"
-            onChangeText={temperature =>
-              this.setState({ temperature: temperature })
-            }
-            editable={false}
-            keyboardType="number-pad"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.setState({ extruderDIR: "+" });
-                this.run_extruder("+");
-              }}
-            >
-              <Text style={styles.buttonText}>Extruder UP</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.setState({ extruderDIR: "-" });
-                this.run_extruder("-");
-              }}
-            >
-              <Text style={styles.buttonText}>Extruder DOWN</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              this.stop_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Spool</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.button_logout}
-            onPress={() => {
-              this.logOut();
-            }}
-          >
-            <Text style={styles.buttonText}>Log out</Text>
-          </TouchableOpacity>
-          <Text>You can control the fiber drawing tower!</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Extruder Speed"
-            onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Spool Speed"
-            onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
-            keyboardType="number-pad"
-            autoCompleteType="off"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Temperature - unavailable"
-            onChangeText={temperature =>
-              this.setState({ temperature: temperature })
-            }
-            editable={false}
-            keyboardType="number-pad"
-            clearTextOnFocus={true}
-          ></TextInput>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              this.stop_extruder();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Extruder</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              this.stop_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Spool</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.button_logout}
+          onPress={() => {
+            this.logOut();
+          }}
+        >
+          <Text style={styles.buttonText}>Log out</Text>
+        </TouchableOpacity>
+        <Text>You can control the fiber drawing tower!</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Extruder Speed"
+          onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
+          keyboardType="number-pad"
+          clearTextOnFocus={true}
+        ></TextInput>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Spool Speed"
+          onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
+          keyboardType="number-pad"
+          clearTextOnFocus={true}
+        ></TextInput>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Temperature"
+          onChangeText={temperature =>
+            this.setState({ temperature: temperature })
+          }
+          keyboardType="number-pad"
+          clearTextOnFocus={true}
+        ></TextInput>
+        <ExtruderButton
+          x-auth-token={this.state["x-auth-token"]}
+          speed={this.state.extruderRPM}
+          stop={this.state.extruderStop}
+          direction={this.state.extruderDIR}
+        ></ExtruderButton>
+        <SpoolButton
+          x-auth-token={this.state["x-auth-token"]}
+          speed={this.state.spoolRPM}
+          stop={this.state.spoolStop}
+          direction="-"
+        ></SpoolButton>
+        <HeaterButton x-auth-token={this.state["x-auth-token"]}></HeaterButton>
+      </View>
+    );
   }
 
   showUserList() {
@@ -748,7 +721,7 @@ export default class App extends Component {
             <Text style={{ color: "#B21F66", fontWeight: "bold", margin: 10 }}>
               Sign-Up date
             </Text>{" "}
-            {value.date}
+            {new Date(value.date).toLocaleDateString(undefined)}
           </Text>
           {
             <AuthButton
