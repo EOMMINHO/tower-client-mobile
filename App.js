@@ -110,7 +110,7 @@ class ExtruderButton extends Component {
     clearInterval(this.timerID);
   }
 
-  async run_extruder() {
+  async run_extruder(direction) {
     let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
       method: "POST",
       headers: {
@@ -121,7 +121,7 @@ class ExtruderButton extends Component {
       body: JSON.stringify({
         stop: false,
         speed: this.props.speed,
-        direction: this.props.direction
+        direction: direction
       })
     });
 
@@ -175,7 +175,7 @@ class ExtruderButton extends Component {
             onPress={() => {
               clearInterval(this.timerID);
               this.setState({ direction: "+" });
-              this.run_extruder();
+              this.run_extruder("+");
             }}
           >
             <Text style={styles.buttonText}>Extruder UP</Text>
@@ -185,7 +185,7 @@ class ExtruderButton extends Component {
             onPress={() => {
               clearInterval(this.timerID);
               this.setState({ direction: "-" });
-              this.run_extruder();
+              this.run_extruder("-");
             }}
           >
             <Text style={styles.buttonText}>Extruder DOWN</Text>
@@ -333,7 +333,18 @@ class HeaterButton extends Component {
     };
   }
 
-  async run_heater() {
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.setState({ stop: this.props.stop }),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  async run_heater(temp) {
     let response = await fetch(
       "http://tower.minhoeom.com:3010/api/temperature",
       {
@@ -344,7 +355,7 @@ class HeaterButton extends Component {
           "x-auth-token": this.props["x-auth-token"]
         },
         body: JSON.stringify({
-          temp: this.props.temperature
+          temp: temp
         })
       }
     );
@@ -355,19 +366,45 @@ class HeaterButton extends Component {
     if (responseStatus != 200) {
       alert(responseText);
       return;
-    } else {
+    } else if (temp !== 0) {
       this.setState({ running: true });
       alert("running");
+      return;
+    } else {
+      this.setState({ running: false });
+      alert("stopped");
       return;
     }
   }
 
   render() {
-    return (
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Run Heater (not operate)</Text>
-      </TouchableOpacity>
-    );
+    if (!this.state.running) {
+      return (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            clearInterval(this.timerID);
+            this.run_heater(this.props.temperature);
+          }}
+        >
+          <Text style={styles.buttonText}>Run Heater</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <TouchableOpacity
+          style={styles.buttonCaution}
+          onPress={() => {
+            clearInterval(this.timerID);
+            this.run_heater(0);
+          }}
+        >
+          <Text style={styles.buttonText}>Stop Heater</Text>
+          <ActivityIndicator size="small" color="#00ff00" />
+          <Text style={styles.buttonText}>{this.props.temperature} C</Text>
+        </TouchableOpacity>
+      );
+    }
   }
 }
 
@@ -695,9 +732,13 @@ export default class App extends Component {
           x-auth-token={this.state["x-auth-token"]}
           speed={this.state.spoolRPM}
           stop={this.state.spoolStop}
-          direction="-"
+          direction="+"
         ></SpoolButton>
-        <HeaterButton x-auth-token={this.state["x-auth-token"]}></HeaterButton>
+        <HeaterButton
+          x-auth-token={this.state["x-auth-token"]}
+          temperature={this.state.temperature}
+          running={this.state.heaterRunning}
+        ></HeaterButton>
       </View>
     );
   }
