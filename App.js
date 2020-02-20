@@ -194,17 +194,28 @@ class ExtruderButton extends Component {
       );
     } else {
       return (
-        <TouchableOpacity
-          style={styles.buttonCaution}
-          onPress={() => {
-            clearInterval(this.timerID);
-            this.stop_extruder();
-          }}
-        >
-          <Text style={styles.buttonText}>Stop Extruder</Text>
-          <ActivityIndicator size="small" color="#00ff00" />
-          <Text style={styles.buttonText}>{this.props.speed}RPM</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.buttonCaution}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.stop_extruder();
+            }}
+          >
+            <Text style={styles.buttonText}>Stop Extruder</Text>
+            <ActivityIndicator size="small" color="#00ff00" />
+            <Text style={styles.buttonText}>{this.props.speed}RPM</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.run_extruder(this.state.direction);
+            }}
+          >
+            <Text style={styles.buttonText}>change Extruder</Text>
+          </TouchableOpacity>
+        </View>
       );
     }
   }
@@ -246,6 +257,7 @@ class SpoolButton extends Component {
         direction: this.props.direction
       })
     });
+    console.log(this.props.speed);
 
     let responseText = await response.text();
     let responseStatus = await response.status;
@@ -305,7 +317,7 @@ class SpoolButton extends Component {
       );
     } else {
       return (
-        <View>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             style={styles.buttonCaution}
             onPress={() => {
@@ -316,6 +328,15 @@ class SpoolButton extends Component {
             <Text style={styles.buttonText}>Stop Spool</Text>
             <ActivityIndicator size="small" color="#00ff00" />
             <Text style={styles.buttonText}>{this.props.speed} RPM</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.run_spool();
+            }}
+          >
+            <Text style={styles.buttonText}>change spool</Text>
           </TouchableOpacity>
         </View>
       );
