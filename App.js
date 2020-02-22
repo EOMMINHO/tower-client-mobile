@@ -35,7 +35,7 @@ class AuthButton extends Component {
 
   async queryAuthorization(isAuthorized) {
     let response = await fetch(
-      "http://tower.minhoeom.com:3010/api/admin/changeAuth",
+      "http://tower.bnilab.com:3010/api/admin/changeAuth",
       {
         method: "POST",
         headers: {
@@ -111,7 +111,7 @@ class ExtruderButton extends Component {
   }
 
   async run_extruder(direction) {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
+    let response = await fetch("http://tower.bnilab.com:3010/api/extruder", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -139,7 +139,7 @@ class ExtruderButton extends Component {
   }
 
   async stop_extruder() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/extruder", {
+    let response = await fetch("http://tower.bnilab.com:3010/api/extruder", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -244,7 +244,7 @@ class SpoolButton extends Component {
   }
 
   async run_spool() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
+    let response = await fetch("http://tower.bnilab.com:3010/api/fiber", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -273,7 +273,7 @@ class SpoolButton extends Component {
   }
 
   async stop_spool() {
-    let response = await fetch("http://tower.minhoeom.com:3010/api/fiber", {
+    let response = await fetch("http://tower.bnilab.com:3010/api/fiber", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -366,20 +366,17 @@ class HeaterButton extends Component {
   }
 
   async run_heater(temp) {
-    let response = await fetch(
-      "http://tower.minhoeom.com:3010/api/temperature",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "x-auth-token": this.props["x-auth-token"]
-        },
-        body: JSON.stringify({
-          temp: temp
-        })
-      }
-    );
+    let response = await fetch("http://tower.bnilab.com:3010/api/temperature", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.props["x-auth-token"]
+      },
+      body: JSON.stringify({
+        temp: temp
+      })
+    });
 
     let responseText = await response.text();
     let responseStatus = await response.status;
@@ -458,7 +455,7 @@ export default class App extends Component {
   // Initialize the application
   async checkExtruder() {
     let response_extruder = await fetch(
-      "http://tower.minhoeom.com:3010/api/extruder",
+      "http://tower.bnilab.com:3010/api/extruder",
       {
         method: "GET",
         "Access-Control-Allow-Origin": true,
@@ -486,18 +483,15 @@ export default class App extends Component {
   }
 
   async checkSpool() {
-    let response_spool = await fetch(
-      "http://tower.minhoeom.com:3010/api/fiber",
-      {
-        method: "GET",
-        "Access-Control-Allow-Origin": true,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "x-auth-token": this.state["x-auth-token"]
-        }
+    let response_spool = await fetch("http://tower.bnilab.com:3010/api/fiber", {
+      method: "GET",
+      "Access-Control-Allow-Origin": true,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "x-auth-token": this.state["x-auth-token"]
       }
-    );
+    });
 
     let responseText = await response_spool.text();
     let responseJson = JSON.parse(responseText);
@@ -516,7 +510,7 @@ export default class App extends Component {
 
   async checkHeater() {
     let response_heater = await fetch(
-      "http://tower.minhoeom.com:3010/api/temperature",
+      "http://tower.bnilab.com:3010/api/temperature",
       {
         method: "GET",
         "Access-Control-Allow-Origin": true,
@@ -538,7 +532,7 @@ export default class App extends Component {
 
   async checkMicrometer() {
     let response_micrometer = await fetch(
-      "http://tower.minhoeom.com:3010/api/micrometer",
+      "http://tower.bnilab.com:3010/api/micrometer",
       {
         method: "GET",
         "Access-Control-Allow-Origin": true,
@@ -580,7 +574,7 @@ export default class App extends Component {
 
   async fetchLogIn() {
     let response = await fetch(
-      "http://tower.minhoeom.com:3010/api/users/signIn",
+      "http://tower.bnilab.com:3010/api/users/signIn",
       {
         method: "POST",
         "Access-Control-Allow-Origin": true,
@@ -628,7 +622,7 @@ export default class App extends Component {
 
   async fetchSignUp() {
     let response = await fetch(
-      "http://tower.minhoeom.com:3010/api/users/signUp",
+      "http://tower.bnilab.com:3010/api/users/signUp",
       {
         method: "POST",
         "Access-Control-Allow-Origin": true,
@@ -658,7 +652,7 @@ export default class App extends Component {
 
   async queryEveryUser() {
     let response = await fetch(
-      "http://tower.minhoeom.com:3010/api/admin/findEveryUser",
+      "http://tower.bnilab.com:3010/api/admin/findEveryUser",
       {
         method: "POST",
         headers: {
