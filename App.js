@@ -20,7 +20,7 @@ var jwtDecode = require("jwt-decode");
 
 const extruder = true;
 const spool = true;
-const heater = false;
+const heater = true;
 const micrometer = false;
 
 class AuthButton extends Component {
@@ -323,7 +323,6 @@ class SpoolButton extends Component {
         direction: this.props.direction
       })
     });
-    console.log(this.props.speed);
 
     let responseText = await response.text();
     let responseStatus = await response.status;
@@ -476,17 +475,28 @@ class HeaterButton extends Component {
       );
     } else {
       return (
-        <TouchableOpacity
-          style={styles.buttonCaution}
-          onPress={() => {
-            clearInterval(this.timerID);
-            this.run_heater(0);
-          }}
-        >
-          <Text style={styles.buttonText}>Stop Heater</Text>
-          <ActivityIndicator size="small" color="#00ff00" />
-          <Text style={styles.buttonText}>{this.props.temperature} C</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.buttonCaution}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.run_heater(0);
+            }}
+          >
+            <Text style={styles.buttonText}>Stop Heater</Text>
+            <ActivityIndicator size="small" color="#00ff00" />
+            <Text style={styles.buttonText}>{this.props.temperature} C</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              clearInterval(this.timerID);
+              this.run_heater(this.props.temperature);
+            }}
+          >
+            <Text style={styles.buttonText}>change Heater</Text>
+          </TouchableOpacity>
+        </View>
       );
     }
   }
