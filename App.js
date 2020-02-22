@@ -49,7 +49,7 @@ class AuthButton extends Component {
         })
       }
     );
-    console.log(this.state.isAuthorized);
+
     let responseText = await response.text();
     let responseStatus = await response.status;
 
@@ -64,25 +64,91 @@ class AuthButton extends Component {
   render() {
     if (this.state.isAuthorized) {
       return (
-        <Button
-          title="Authorized"
-          color="green"
-          onPress={() => {
-            this.setState({ isAuthorized: false });
-            this.queryAuthorization(false);
-          }}
-        />
+        <View style={{ margin: 10 }}>
+          <Button
+            title="Authorized"
+            color="green"
+            onPress={() => {
+              this.setState({ isAuthorized: false });
+              this.queryAuthorization(false);
+            }}
+          />
+        </View>
       );
     } else {
       return (
-        <Button
-          title="Un-authorized"
-          color="red"
-          onPress={() => {
-            this.setState({ isAuthorized: true });
-            this.queryAuthorization(true);
-          }}
-        />
+        <View style={{ margin: 10 }}>
+          <Button
+            title="Un-authorized"
+            color="red"
+            style={{ margin: 10 }}
+            onPress={() => {
+              this.setState({ isAuthorized: true });
+              this.queryAuthorization(true);
+            }}
+          />
+        </View>
+      );
+    }
+  }
+}
+
+class AuthDeleteButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isDeleted: false,
+      ID: this.props.ID,
+      "x-auth-token": this.props["x-auth-token"]
+    };
+  }
+
+  async queryAuthorization() {
+    let response = await fetch(
+      "http://tower.bnilab.com:3010/api/admin/deleteUser",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-auth-token": this.state["x-auth-token"]
+        },
+        body: JSON.stringify({
+          id: this.state.ID
+        })
+      }
+    );
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    } else {
+      return JSON.parse(responseText);
+    }
+  }
+
+  render() {
+    if (this.state.isDeleted) {
+      return (
+        <View style={{ margin: 10 }}>
+          <Button title="Deleted" color="red" disabled={true} />
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ margin: 10 }}>
+          <Button
+            title="Delete"
+            color="red"
+            onPress={() => {
+              this.queryAuthorization();
+              this.setState({ isDeleted: true });
+            }}
+          />
+        </View>
       );
     }
   }
@@ -779,13 +845,15 @@ export default class App extends Component {
             </Text>{" "}
             {new Date(value.date).toLocaleDateString(undefined)}
           </Text>
-          {
-            <AuthButton
-              isAuthorized={value.isAuthorized}
-              ID={value.ID}
-              x-auth-token={this.state["x-auth-token"]}
-            />
-          }
+          <AuthButton
+            isAuthorized={value.isAuthorized}
+            ID={value.ID}
+            x-auth-token={this.state["x-auth-token"]}
+          />
+          <AuthDeleteButton
+            ID={value.ID}
+            x-auth-token={this.state["x-auth-token"]}
+          />
         </View>
       );
     }
