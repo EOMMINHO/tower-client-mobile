@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import logo from "./assets/logo_small2.png";
 import { BorderlessButton, Switch } from "react-native-gesture-handler";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 var jwtDecode = require("jwt-decode");
 
 const extruder = true;
@@ -236,51 +237,64 @@ class ExtruderButton extends Component {
     if (this.state.stop) {
       return (
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.setState({ direction: "+" });
-              this.run_extruder("+");
-            }}
-          >
-            <Text style={styles.buttonText}>Extruder UP</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.setState({ direction: "-" });
-              this.run_extruder("-");
-            }}
-          >
-            <Text style={styles.buttonText}>Extruder DOWN</Text>
-          </TouchableOpacity>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="arrow-up"
+              backgroundColor="#3b5998"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.setState({ direction: "+" });
+                this.run_extruder("+");
+              }}
+            >
+              Extruder UP
+            </FontAwesome.Button>
+          </View>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="arrow-down"
+              backgroundColor="#3b5998"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.setState({ direction: "-" });
+                this.run_extruder("-");
+              }}
+            >
+              Extruder DOWN
+            </FontAwesome.Button>
+          </View>
         </View>
       );
     } else {
       return (
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.stop_extruder();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Extruder</Text>
-            <ActivityIndicator size="small" color="#00ff00" />
-            <Text style={styles.buttonText}>{this.props.speed}RPM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.run_extruder(this.state.direction);
-            }}
-          >
-            <Text style={styles.buttonText}>change Extruder</Text>
-          </TouchableOpacity>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="anchor"
+              backgroundColor="#f57b51"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.stop_extruder();
+              }}
+            >
+              <Text style={styles.buttonText}>Stop Extruder</Text>
+              <ActivityIndicator size="small" color="#00ff00" />
+              <Text style={styles.buttonText}>{this.props.speed}RPM</Text>
+            </FontAwesome.Button>
+          </View>
+
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="arrow-down"
+              backgroundColor="#3b5998"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.run_extruder(this.state.direction);
+              }}
+            >
+              <Text style={styles.buttonText}>change Extruder</Text>
+            </FontAwesome.Button>
+          </View>
         </View>
       );
     }
@@ -368,41 +382,49 @@ class SpoolButton extends Component {
   render() {
     if (this.state.stop) {
       return (
-        <View>
-          <TouchableOpacity
-            style={styles.button}
+        <View style={styles.iconbutton}>
+          <FontAwesome.Button
+            name="arrow-down"
+            backgroundColor="#3b5998"
             onPress={() => {
               clearInterval(this.timerID);
               this.run_spool();
             }}
           >
-            <Text style={styles.buttonText}>Run Spool</Text>
-          </TouchableOpacity>
+            Run Spool
+          </FontAwesome.Button>
         </View>
       );
     } else {
       return (
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.stop_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Spool</Text>
-            <ActivityIndicator size="small" color="#00ff00" />
-            <Text style={styles.buttonText}>{this.props.speed} RPM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.run_spool();
-            }}
-          >
-            <Text style={styles.buttonText}>change spool</Text>
-          </TouchableOpacity>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="anchor"
+              backgroundColor="#f57b51"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.stop_spool();
+              }}
+            >
+              <Text style={styles.buttonText}>Stop Spool</Text>
+              <ActivityIndicator size="small" color="#00ff00" />
+              <Text style={styles.buttonText}>{this.props.speed} RPM</Text>
+            </FontAwesome.Button>
+          </View>
+
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="arrow-down"
+              backgroundColor="#3b5998"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.run_spool();
+              }}
+            >
+              <Text style={styles.buttonText}>change spool</Text>
+            </FontAwesome.Button>
+          </View>
         </View>
       );
     }
@@ -463,39 +485,231 @@ class HeaterButton extends Component {
   render() {
     if (!this.state.running) {
       return (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            clearInterval(this.timerID);
-            this.run_heater(this.props.temperature);
-          }}
-        >
-          <Text style={styles.buttonText}>Run Heater</Text>
-        </TouchableOpacity>
-      );
-    } else {
-      return (
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={styles.buttonCaution}
-            onPress={() => {
-              clearInterval(this.timerID);
-              this.run_heater(0);
-            }}
-          >
-            <Text style={styles.buttonText}>Stop Heater</Text>
-            <ActivityIndicator size="small" color="#00ff00" />
-            <Text style={styles.buttonText}>{this.props.temperature} C</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
+        <View style={styles.iconbutton}>
+          <FontAwesome.Button
+            name="fire"
+            backgroundColor="#3b5998"
             onPress={() => {
               clearInterval(this.timerID);
               this.run_heater(this.props.temperature);
             }}
           >
-            <Text style={styles.buttonText}>change Heater</Text>
-          </TouchableOpacity>
+            Run Heater
+          </FontAwesome.Button>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ flexDirection: "row" }}>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="fire-extinguisher"
+              backgroundColor="#f57b51"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.run_heater(0);
+              }}
+            >
+              <Text style={styles.buttonText}>Stop Heater</Text>
+              <ActivityIndicator size="small" color="#00ff00" />
+              <Text style={styles.buttonText}>{this.props.temperature} C</Text>
+            </FontAwesome.Button>
+          </View>
+
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="fire"
+              backgroundColor="#3b5998"
+              onPress={() => {
+                clearInterval(this.timerID);
+                this.run_heater(this.props.temperature);
+              }}
+            >
+              <Text style={styles.buttonText}>change Heater</Text>
+            </FontAwesome.Button>
+          </View>
+        </View>
+      );
+    }
+  }
+}
+
+class PIDSetting extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "x-auth-token": this.props["x-auth-token"],
+      open: false
+    };
+  }
+
+  render() {
+    if (!this.state.open) {
+      return (
+        <View>
+          <FontAwesome.Button
+            name="gear"
+            backgroundColor="#3b5998"
+            onPress={() => {
+              this.setState({ open: true });
+            }}
+          >
+            PID setting
+          </FontAwesome.Button>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.UserList}>
+          <FontAwesome.Button
+            name="save"
+            backgroundColor="#3b5998"
+            onPress={() => {
+              this.setState({ open: false });
+            }}
+          >
+            Save
+          </FontAwesome.Button>
+          <TextInput
+            style={styles.textInput}
+            placeholder="P"
+            onChangeText={P => this.props.setState({ P: parseFloat(P) })}
+            keyboardType="number-pad"
+          ></TextInput>
+          <TextInput
+            style={styles.textInput}
+            placeholder="I"
+            onChangeText={I => this.props.setState({ I: parseFloat(I) })}
+            keyboardType="number-pad"
+          ></TextInput>
+          <TextInput
+            style={styles.textInput}
+            placeholder="D"
+            onChangeText={D => this.props.setState({ D: parseFloat(D) })}
+            keyboardType="number-pad"
+          ></TextInput>
+        </View>
+      );
+    }
+  }
+}
+
+class PIDButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      "x-auth-token": this.props["x-auth-token"],
+      running: this.props.running,
+      diameter: this.props.diameter,
+      P: this.props.P,
+      I: this.props.I,
+      D: this.props.D
+    };
+  }
+
+  async SetController() {
+    let response = await fetch(
+      "http://tower.bnilab.com:3010/api/micrometer/pidSetting",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-auth-token": this.props["x-auth-token"]
+        },
+        body: JSON.stringify({
+          P: this.state.P,
+          I: this.state.I,
+          D: this.state.D,
+          diameter: this.state.diameter
+        })
+      }
+    );
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    // if error, return
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    }
+  }
+
+  async RunController() {
+    let response = await fetch(
+      "http://tower.bnilab.com:3010/api/micrometer/pidOn",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-auth-token": this.props["x-auth-token"]
+        }
+      }
+    );
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    // if error, return
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    }
+
+    this.setState({ running: true });
+  }
+
+  async StopController() {
+    let response = await fetch(
+      "http://tower.bnilab.com:3010/api/micrometer/pidOff",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "x-auth-token": this.props["x-auth-token"]
+        }
+      }
+    );
+
+    let responseText = await response.text();
+    let responseStatus = await response.status;
+
+    // if error, return
+    if (responseStatus != 200) {
+      alert(responseText);
+      return;
+    }
+
+    this.setState({ running: false });
+  }
+
+  render() {
+    if (!this.state.running) {
+      return (
+        <View style={styles.iconbutton}>
+          <FontAwesome.Button
+            name="thumbs-up"
+            backgroundColor="#3b5998"
+            onPress={() => this.RunController()}
+          >
+            <Text style={styles.buttonText}>Run Extruder&Spool</Text>
+          </FontAwesome.Button>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.iconbutton}>
+          <FontAwesome.Button
+            name="stop"
+            backgroundColor="#f57b51"
+            onPress={() => this.StopController()}
+          >
+            <Text style={styles.buttonText}>Stop</Text>
+            <ActivityIndicator size="small" color="#00ff00" />
+          </FontAwesome.Button>
         </View>
       );
     }
@@ -523,7 +737,13 @@ export default class App extends Component {
       spoolStop: true,
       temperature: 0,
       heaterRunning: false,
-      userInfo: []
+      userInfo: [],
+      isPID: false,
+      PIDrunning: false,
+      diameter: 0,
+      P: 0.25,
+      I: 0.1,
+      D: 0.1
     };
     this.myTextInput = React.createRef();
   }
@@ -760,16 +980,17 @@ export default class App extends Component {
     if (this.state.isAdmin) {
       return (
         <View style={styles.container}>
-          <TouchableOpacity style={styles.button_logout}>
-            <Text
-              style={styles.buttonText}
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="home"
+              backgroundColor="#3b5998"
               onPress={() =>
-                this.setState({ showCTRL: false, showToolBox: true })
+                this.setState({ showUM: false, showToolBox: true })
               }
             >
-              Toolbox
-            </Text>
-          </TouchableOpacity>
+              Home
+            </FontAwesome.Button>
+          </View>
           {this.controlPanel()}
         </View>
       );
@@ -779,59 +1000,128 @@ export default class App extends Component {
   }
 
   controlPanel() {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.button_logout}
-          onPress={() => {
-            this.logOut();
-          }}
-        >
-          <Text style={styles.buttonText}>Log out</Text>
-        </TouchableOpacity>
-        <Text>You can control the fiber drawing tower!</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Extruder Speed"
-          onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
-          keyboardType="number-pad"
-          clearTextOnFocus={true}
-        ></TextInput>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Spool Speed"
-          onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
-          keyboardType="number-pad"
-          clearTextOnFocus={true}
-        ></TextInput>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Temperature"
-          onChangeText={temperature =>
-            this.setState({ temperature: temperature })
-          }
-          keyboardType="number-pad"
-          clearTextOnFocus={true}
-        ></TextInput>
-        <ExtruderButton
-          x-auth-token={this.state["x-auth-token"]}
-          speed={this.state.extruderRPM}
-          stop={this.state.extruderStop}
-          direction={this.state.extruderDIR}
-        ></ExtruderButton>
-        <SpoolButton
-          x-auth-token={this.state["x-auth-token"]}
-          speed={this.state.spoolRPM}
-          stop={this.state.spoolStop}
-          direction="+"
-        ></SpoolButton>
-        <HeaterButton
-          x-auth-token={this.state["x-auth-token"]}
-          temperature={this.state.temperature}
-          running={this.state.heaterRunning}
-        ></HeaterButton>
-      </View>
-    );
+    if (!this.state.isPID) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="sign-out"
+              backgroundColor="#d63447"
+              onPress={() => {
+                this.logOut();
+              }}
+            >
+              Log out
+            </FontAwesome.Button>
+          </View>
+          <Text>Open Loop Control</Text>
+          <Switch
+            value={this.state.isPID}
+            onValueChange={v => this.setState({ isPID: v })}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Extruder Speed"
+            onChangeText={RPM => this.setState({ extruderRPM: parseInt(RPM) })}
+            keyboardType="number-pad"
+            clearTextOnFocus={true}
+          ></TextInput>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Spool Speed"
+            onChangeText={RPM => this.setState({ spoolRPM: parseInt(RPM) })}
+            keyboardType="number-pad"
+            clearTextOnFocus={true}
+          ></TextInput>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Temperature"
+            onChangeText={temperature =>
+              this.setState({ temperature: temperature })
+            }
+            keyboardType="number-pad"
+            clearTextOnFocus={true}
+          ></TextInput>
+          <ExtruderButton
+            x-auth-token={this.state["x-auth-token"]}
+            speed={this.state.extruderRPM}
+            stop={this.state.extruderStop}
+            direction={this.state.extruderDIR}
+          ></ExtruderButton>
+          <SpoolButton
+            x-auth-token={this.state["x-auth-token"]}
+            speed={this.state.spoolRPM}
+            stop={this.state.spoolStop}
+            direction="+"
+          ></SpoolButton>
+          <HeaterButton
+            x-auth-token={this.state["x-auth-token"]}
+            temperature={this.state.temperature}
+            running={this.state.heaterRunning}
+          ></HeaterButton>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="sign-out"
+              backgroundColor="#d63447"
+              onPress={() => {
+                this.logOut();
+              }}
+            >
+              Log out
+            </FontAwesome.Button>
+          </View>
+          <Text>Closed Loop Control</Text>
+          <Switch
+            value={this.state.isPID}
+            onValueChange={v => this.setState({ isPID: v })}
+          />
+          <PIDSetting
+            x-auth-token={this.state["x-auth-token"]}
+            setState={p => {
+              this.setState(p);
+            }}
+          />
+          <View style={{ flexDirection: "row" }}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Temperature"
+              onChangeText={temperature =>
+                this.setState({ temperature: temperature })
+              }
+              keyboardType="number-pad"
+            ></TextInput>
+            <HeaterButton
+              x-auth-token={this.state["x-auth-token"]}
+              temperature={this.state.temperature}
+              running={this.state.heaterRunning}
+            ></HeaterButton>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Diameter"
+              onChangeText={diameter =>
+                this.setState({ diameter: parseInt(diameter) })
+              }
+              keyboardType="number-pad"
+            ></TextInput>
+            <PIDButton
+              x-auth-token={this.state["x-auth-token"]}
+              running={this.state.PIDrunning}
+              diameter={this.state.diameter}
+              P={this.state.P}
+              I={this.state.I}
+              D={this.state.D}
+            ></PIDButton>
+          </View>
+        </View>
+      );
+    }
   }
 
   showUserList() {
@@ -876,32 +1166,44 @@ export default class App extends Component {
     if (this.state.showSignUp) {
       return (
         <View style={styles.container}>
-          <Text style={styles.instruction}>Sign Up</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="ID"
-            onChangeText={ID_signUp => this.setState({ ID_signUp: ID_signUp })}
-            clearTextOnFocus="true"
-          ></TextInput>
-          <TextInput
-            style={styles.textInput}
-            placeholder="PW"
-            onChangeText={PW_signUp => this.setState({ PW_signUp: PW_signUp })}
-            secureTextEntry={true}
-            clearTextOnFocus="true"
-          ></TextInput>
-          <TouchableOpacity
-            onPress={() => this.fetchSignUp()}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.setState({ showSignUp: false })}
-            style={styles.button_logout}
-          >
-            <Text style={styles.buttonText}>Close</Text>
-          </TouchableOpacity>
+          <View style={styles.containerLine}>
+            <Text style={styles.instruction}>Sign Up</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="ID"
+              onChangeText={ID_signUp =>
+                this.setState({ ID_signUp: ID_signUp })
+              }
+              clearTextOnFocus="true"
+            ></TextInput>
+            <TextInput
+              style={styles.textInput}
+              placeholder="PW"
+              onChangeText={PW_signUp =>
+                this.setState({ PW_signUp: PW_signUp })
+              }
+              secureTextEntry={true}
+              clearTextOnFocus="true"
+            ></TextInput>
+            <View style={styles.iconbutton}>
+              <FontAwesome.Button
+                name="user-plus"
+                backgroundColor="#3b5998"
+                onPress={() => this.fetchSignUp()}
+              >
+                Sign Up
+              </FontAwesome.Button>
+            </View>
+            <View style={styles.iconbutton}>
+              <FontAwesome.Button
+                name="close"
+                backgroundColor="#3b5998"
+                onPress={() => this.setState({ showSignUp: false })}
+              >
+                Close
+              </FontAwesome.Button>
+            </View>
+          </View>
         </View>
       );
     }
@@ -916,34 +1218,44 @@ export default class App extends Component {
       return (
         <Fragment>
           <View style={styles.container}>
+            <View style={styles.iconbutton}>
+              <FontAwesome.Button
+                name="sign-out"
+                backgroundColor="#d63447"
+                onPress={() => {
+                  this.logOut();
+                }}
+              >
+                Log out
+              </FontAwesome.Button>
+            </View>
+          </View>
+          <View style={styles.container}>
             <Text>Welcome Sir!</Text>
             <Text>EGITH stands for "Even Gone, I'm The Hero"</Text>
             <Text>Just as Minho Eom, the author of this program is</Text>
           </View>
           <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.button_logout}
-              onPress={() => {
-                this.logOut();
-              }}
-            >
-              <Text style={styles.buttonText}>Log out</Text>
-            </TouchableOpacity>
-            <Text>It is an Admin Tool</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => this.queryEveryUser()}
-            >
-              <Text style={styles.buttonText}>User Management</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>
-                this.setState({ showCTRL: true, showToolBox: false })
-              }
-            >
-              <Text style={styles.buttonText}>Operate tower</Text>
-            </TouchableOpacity>
+            <View style={styles.iconbutton}>
+              <FontAwesome.Button
+                name="user"
+                backgroundColor="#3b5998"
+                onPress={() => this.queryEveryUser()}
+              >
+                User Management
+              </FontAwesome.Button>
+            </View>
+            <View style={styles.iconbutton}>
+              <FontAwesome.Button
+                name="inbox"
+                backgroundColor="#3b5998"
+                onPress={() =>
+                  this.setState({ showCTRL: true, showToolBox: false })
+                }
+              >
+                Operate tower
+              </FontAwesome.Button>
+            </View>
           </View>
         </Fragment>
       );
@@ -953,25 +1265,28 @@ export default class App extends Component {
     if (this.state.showUM && this.state.isAdmin) {
       return (
         <View style={styles.container}>
-          <TouchableOpacity style={styles.button_logout}>
-            <Text
-              style={styles.buttonText}
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="home"
+              backgroundColor="#3b5998"
               onPress={() =>
                 this.setState({ showUM: false, showToolBox: true })
               }
             >
-              Toolbox
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button_logout}
-            onPress={() => {
-              this.logOut();
-            }}
-          >
-            <Text style={styles.buttonText}>Log out</Text>
-          </TouchableOpacity>
-          <Text>You can manage users</Text>
+              Home
+            </FontAwesome.Button>
+          </View>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="sign-out"
+              backgroundColor="#d63447"
+              onPress={() => {
+                this.logOut();
+              }}
+            >
+              Log out
+            </FontAwesome.Button>
+          </View>
           {this.showUserList()}
         </View>
       );
@@ -1003,18 +1318,24 @@ export default class App extends Component {
           clearTextOnFocus={true}
         ></TextInput>
         <View>
-          <TouchableOpacity
-            onPress={() => this.fetchLogIn()}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.setState({ showSignUp: true })}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="sign-in"
+              backgroundColor="#3b5998"
+              onPress={() => this.fetchLogIn()}
+            >
+              Sign In
+            </FontAwesome.Button>
+          </View>
+          <View style={styles.iconbutton}>
+            <FontAwesome.Button
+              name="user-plus"
+              backgroundColor="#3b5998"
+              onPress={() => this.setState({ showSignUp: true })}
+            >
+              Sign Up
+            </FontAwesome.Button>
+          </View>
         </View>
       </View>
     );
@@ -1027,6 +1348,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  containerLine: {
+    borderStyle: "solid",
+    borderWidth: 2,
+    borderRadius: 3,
+    margin: 20,
+    padding: 20
   },
   UserList: {
     borderStyle: "solid",
@@ -1079,6 +1407,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "#fff"
+  },
+  iconbutton: {
+    margin: 10
   },
   textInput: {
     margin: 20,
