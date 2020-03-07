@@ -1002,7 +1002,7 @@ export default class App extends Component {
   controlPanel() {
     if (!this.state.isPID) {
       return (
-        <View style={styles.container}>
+        <View style={styles.containerTop}>
           <View style={styles.iconbutton}>
             <FontAwesome.Button
               name="sign-out"
@@ -1063,7 +1063,7 @@ export default class App extends Component {
       );
     } else {
       return (
-        <View style={styles.container}>
+        <View style={styles.containerTop}>
           <View style={styles.iconbutton}>
             <FontAwesome.Button
               name="sign-out"
@@ -1359,6 +1359,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  containerTop: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center"
   },
   containerLine: {
     borderStyle: "solid",
