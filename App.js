@@ -17,6 +17,7 @@ import {
 import logo from "./assets/logo_small2.png";
 import { BorderlessButton, Switch } from "react-native-gesture-handler";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { MicrometerChart } from "./chart";
 var jwtDecode = require("jwt-decode");
 
 const extruder = true;
@@ -1059,6 +1060,7 @@ export default class App extends Component {
             temperature={this.state.temperature}
             running={this.state.heaterRunning}
           ></HeaterButton>
+          <MicrometerChart />
         </View>
       );
     } else {
@@ -1119,6 +1121,7 @@ export default class App extends Component {
               D={this.state.D}
             ></PIDButton>
           </View>
+          <MicrometerChart />
         </View>
       );
     }
