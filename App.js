@@ -1308,14 +1308,25 @@ export default class App extends Component {
           style={styles.textInput}
           placeholder="ID"
           onChangeText={ID => this.setState({ ID })}
-          clearTextOnFocus={true}
+          onKeyPress={e => {
+            if (e.nativeEvent.key === "Enter") {
+              this.secondTextInput.focus();
+            }
+          }}
         ></TextInput>
         <TextInput
           style={styles.textInput}
+          ref={input => {
+            this.secondTextInput = input;
+          }}
           placeholder="Password"
           onChangeText={PW => this.setState({ PW })}
           secureTextEntry={true}
-          clearTextOnFocus={true}
+          onKeyPress={e => {
+            if (e.nativeEvent.key === "Enter") {
+              this.fetchLogIn();
+            }
+          }}
         ></TextInput>
         <View>
           <View style={styles.iconbutton}>
